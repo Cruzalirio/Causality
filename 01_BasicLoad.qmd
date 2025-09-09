@@ -1,0 +1,65 @@
+---
+title: "Análisis Espacial del Índice de Deforestación en Colombia"
+author: "Usuario"
+date: "`r Sys.Date()`"
+format: html
+editor: visual
+---
+
+## Introducción
+
+Este documento describe los pasos para realizar un análisis espacial del índice de deforestación por municipio en Colombia, incluyendo estadística descriptiva, análisis de tendencia espacial y construcción de un modelo SAR.
+
+## 1. Estadística descriptiva, correlaciones y mapas
+
+### Preparación de datos
+
+```{r}
+# Instalar y cargar librerías necesarias
+#install.packages(c("sf", "tidyverse", "ggplot2", "corrplot", "tmap", "spdep"))
+library(sf)
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(tmap)
+library(spdep)
+library(readxl)
+```
+
+### Carga de datos
+
+```{r}
+datos <- read_excel("Data/Datos_ICM_2023_V2.xlsx", 
+    skip = 3)
+Mapa <- read_sf("~/2026/Raquel/Causality/Data/SHP_Colombia/MGN_MPIO_POLITICO.shp")
+```
+
+### Gráficos de mapas
+
+```{r}
+Mapa2022 <- Mapa %>% 
+  left_join(datos %>% filter(AÑO==2022),
+            by=c("MPIO_CDPMP"="Divipola"))
+
+p1 <- ggplot()+geom_sf(data=Mapa2022, aes(fill = ICM_00_0))+
+  coord_sf()
+
+p1 <- p1 +ggspatial::annotation_scale(
+  location = "tl",
+  bar_cols = c("grey60", "white")
+) +
+  ggspatial::annotation_north_arrow(
+    location = "bl", which_north = "true",
+    pad_x = unit(0, "in"), pad_y = unit(0, "in"),
+    style = ggspatial::north_arrow_nautical(
+      fill = c("grey40", "white"),
+      line_col = "grey20"
+    )
+  )+
+  xlab("Longitude")+
+  ylab("Latitude")+
+  scale_fill_gradientn(colours = c("darkred", "orange",
+                                   "yellow"),
+                       name = "Conteo", ,na.value="white")
+p1
+```
