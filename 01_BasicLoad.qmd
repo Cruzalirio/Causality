@@ -60,6 +60,6 @@ p1 <- p1 +ggspatial::annotation_scale(
   ylab("Latitude")+
   scale_fill_gradientn(colours = c("darkred", "orange",
                                    "yellow"),
-                       name = "Conteo", ,na.value="white")
+                       name = "ICM", ,na.value="white")
 p1
 ```
